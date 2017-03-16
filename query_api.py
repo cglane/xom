@@ -12,6 +12,10 @@ def getStockHistory(stock_symbol,start='2012-01-01'):
     yahoo = Share(stock_symbol)
     return yahoo.get_historical(start, end)
 
+def getStockPriceNow(stock_symbol):
+    yahoo = Share(stock_symbol)
+    return float(yahoo.get_price())
+
 def fredValueToday(arg):
     page = requests.get('https://fred.stlouisfed.org/series/'+arg)
     tree = html.fromstring(page.content)

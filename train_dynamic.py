@@ -28,7 +28,7 @@ def buildLabel(openList,closeList):
     action_list = []
     for itr,val in enumerate(closeList):
         if itr != len(closeList)-1:
-            if openList[itr] < closeList[itr]:##Tomorrow's close above Today's Close
+            if closeList[itr] < closeList[itr+1]:##Tomorrow's close above Today's Close
                 action_list.append(1)##Buy
             else:
                 action_list.append(0)##Sell
@@ -37,9 +37,7 @@ def buildLabel(openList,closeList):
     return action_list
 
 
-
 def trainModel(exxon_data, currency_data, brent_data):
-
     'Format Date'
     # exxon_data['date'] = exxon_data['Date'].apply(convertDate)
     exxon_data['date'] = exxon_data['Date']
@@ -91,23 +89,21 @@ def trainModel(exxon_data, currency_data, brent_data):
     train ,test = train_test_split(clean_data,test_size=0.3)
     labels_train = train['action']
     features_train = train.drop(['action','date','exxon_volume_df'],axis=1)
-
     labels_test = test['action']
     features_test = test.drop(['date','action','exxon_volume_df'],axis=1)
 
-    # print ('Fitting over set of ', len(train))
-    # 'Predict Some Stuff'
-    # from sklearn.naive_bayes import GaussianNB
-    # clf = GaussianNB()
-    # print('fitting')
-    # clf = clf.fit(features_train, labels_train)
-    # print('data has been fit')
-    # pred = clf.predict(features_test)
-    # test['prection'] = pred
-    # print test.head(20)
-    # print 'it has been predicted'
-    #
-    # from sklearn.metrics import accuracy_score
-    # acc = accuracy_score(pred, labels_test)
-    # print(acc,' :accuracy-score')
-    # return clf
+    print ('Fitting over set of ', len(train))
+    'Predict Some Stuff'
+    from sklearn.naive_bayes import GaussianNB
+    clf = GaussianNB()
+    print('fitting')
+    clf = clf.fit(features_train, labels_train)
+    print('data has been fit')
+    pred = clf.predict(features_test)
+    test['prediction'] = pred
+    print 'it has been predicted'
+
+    from sklearn.metrics import accuracy_score
+    acc = accuracy_score(pred, labels_test)
+    print(acc,' :accuracy-score')
+    return clf
