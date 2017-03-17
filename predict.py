@@ -26,44 +26,41 @@ currency_data = pd.read_csv(us_euro)
 exxon_data = pd.read_csv(exxon)
 #
 'exxon_volume_df','DCOILBRENTEU','DEXUSEU'
-currency = [1.0700,1.07039]
-volume = [11970000,436558]
-price = [81.34,82.00]
-brent = [52.13, 52.15]
+
 
 'exxon predict'
-exxon_close_yesterday = mostRecentRow(exxon_data,column='Date', focus="Close")
+exxon_open_yesterday = mostRecentRow(exxon_data,column='Date', focus="Open")
 exxon_price_today = getStockPriceNow('XOM')
 print (exxon_price_today, 'exxon price today')
-price = [exxon_close_yesterday,exxon_price_today]
+price = [exxon_open_yesterday,exxon_price_today]
 print price
 
 'currency predict'
 currency_close_yesterday = mostRecentRow(currency_data,column='date', focus="value")
-currency_price_today = fredValueToday('DEXUSEU')
+currency_price_today = getStockPriceNow('EURUSD=X')
 print (currency_price_today, 'currency price today')
-curency = [currency_close_yesterday,currency_price_today]
+currency = [currency_close_yesterday,currency_price_today]
 print currency
 
 'brent predict'
 
 brent_close_yesterday = mostRecentRow(brent_data,column='date', focus="value")
-brent_price_today = fredValueToday('DCOILBRENTEU')
+brent_price_today = getStockPriceNow('BZ=F')
 print (brent_price_today, 'brent price today')
-curency = [brent_close_yesterday,brent_price_today]
+brent = [brent_close_yesterday,brent_price_today]
 print brent
 
 'predict array'
 # 'DCOILBRENTEU','DEXUSEU','exxon_price_df'
-brent_val = diffVal(brent)[1]
-currency_val =  diffVal(currency)[1]
+brent_val = diffVal(brent, weight = 100)[1]
+print (brent_val, 'brent_val')
+currency_val =  diffVal(currency, weight = 100)[1]
 price_val = diffVal(price)[1]
 
 predict_array = [brent_val,currency_val,price_val]
 model = trainModel(exxon_data,currency_data,brent_data)
 
 today_prediction = model.predict(predict_array)
-print today_prediction
 if today_prediction == 1:
     print 'Buy'
 else:
