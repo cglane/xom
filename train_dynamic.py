@@ -36,7 +36,7 @@ def buildLabel(closeList,openList):
     for itr,val in enumerate(closeList):
         if itr != len(closeList)-1:
             # action_list.append(int(((openList[itr]-closeList[itr])/closeList[itr])*1000))##percent increase
-            if openList[itr] < closeList[itr]:##Tomorrow's close above Today's Close
+            if closeList[itr] < closeList[itr+1]:##Tomorrow's close above Today's Close
                 action_list.append(1)##Buy
             else:
                 action_list.append(0)##Sell
@@ -47,17 +47,18 @@ def buildLabel(closeList,openList):
 def calTotalGain(total, pred, open, close):
     agg_total = total
     for itr,value in enumerate(pred):
-        if value > 0:
-            diff = close[itr]-open[itr]
-            agg_total = (agg_total + diff)
+        if itr < len(pred)-1:
+            if value == 0:
+                diff = close[itr+1]-close[itr]
+                agg_total = (agg_total + diff)
     return (((agg_total-total) / total) *100)
 
 def trainModel(exxon_data, currency_data, brent_data):
     'Format Date'
     exxon_data['date'] = exxon_data['Date']
 
-    ##Compares Today's open vs. yesterday's
-    diff_val = diffVal(list(exxon_data['Open']))
+    ##Compares Today's close vs. yesterday's
+    diff_val = diffVal(list(exxon_data['Close']))
     df = pd.DataFrame(diff_val)
     exxon_data['exxon_price_df'] = df
     exxon_data['exxon_close'] = exxon_data['Close']
@@ -92,15 +93,15 @@ def trainModel(exxon_data, currency_data, brent_data):
     new_merge['action'] = df
 
     'Drop Others'
-    clean_data = new_merge[['date','action','DCOILBRENTEU','DEXUSEU','exxon_price_df','Open','Close']]
+    clean_data = new_merge[['date','action','DCOILBRENTEU','DEXUSEU','exxon_price_df','exxon_open','exxon_close']]
     print clean_data.head(20)
     clean_data = clean_data.fillna(0)
     'Split into Training Testing'
     train ,test = train_test_split(clean_data,test_size=0.4)
     labels_train = train['action'].values
-    features_train = train.drop(['action','date','Open','Close'],axis=1)
+    features_train = train.drop(['action','date','exxon_open','exxon_close'],axis=1)
     labels_test = test['action'].values
-    features_test = test.drop(['date','action','Open','Close'],axis=1)
+    features_test = test.drop(['date','action','exxon_open','exxon_close'],axis=1)
     print ('Fitting over set of ', len(train))
     'Predict Some Stuff'
     # clf = GaussianNB()
@@ -114,12 +115,10 @@ def trainModel(exxon_data, currency_data, brent_data):
     print 'it has been predicted'
 
     total_before_drop = clean_data[(clean_data['date'] > '2016-01-01') & (clean_data['date'] < '2017-01-01')]
-    total = total_before_drop.drop(['date','action','Open','Close'],axis=1)
+    total = total_before_drop.drop(['date','action','exxon_open','exxon_close'],axis=1)
 
     my_pred = clf.predict(total)
-    total['action'] = my_pred
-    print my_pred
-    print calTotalGain(100, my_pred, total_before_drop['Open'].values, total_before_drop['Close'].values)
+    print calTotalGain(100, my_pred, total_before_drop['exxon_open'].values, total_before_drop['exxon_close'].values)
 
 
     from sklearn.metrics import accuracy_score

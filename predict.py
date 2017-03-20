@@ -10,12 +10,12 @@ def mostRecentRow(df,column,focus):
     return float(row[focus].values[0])
 
 
-# BRENT =  pd.DataFrame.from_dict(fredCategory('DCOILBRENTEU'))
-# BRENT.to_csv('./dynamic_files/BRENT.csv')
-# US_EURO = pd.DataFrame.from_dict(fredCategory('DEXUSEU'))
-# US_EURO.to_csv('./dynamic_files/US_EURO.csv')
-# XOM = pd.DataFrame.from_dict(getStockHistory('XOM'))
-# XOM.to_csv('./dynamic_files/XOM.csv')
+BRENT =  pd.DataFrame.from_dict(fredCategory('DCOILBRENTEU'))
+BRENT.to_csv('./dynamic_files/BRENT.csv')
+US_EURO = pd.DataFrame.from_dict(fredCategory('DEXUSEU'))
+US_EURO.to_csv('./dynamic_files/US_EURO.csv')
+XOM = pd.DataFrame.from_dict(getStockHistory('XOM'))
+XOM.to_csv('./dynamic_files/XOM.csv')
 #
 brent = './dynamic_files/Brent.csv'
 us_euro = './dynamic_files/US_EURO.csv'
