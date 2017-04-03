@@ -1,4 +1,4 @@
-from query_api import getStockHistory, fredValueToday, fredCategory,getStockPriceNow
+from query_api import getStockHistory, fredValueToday, fredCategory,getStockPriceNow, bloombergCommodity
 from train_dynamic import trainModel,diffVal
 import pandas as pd
 import json
@@ -36,7 +36,7 @@ price = [exxon_open_yesterday,exxon_price_today]
 print price
 
 'currency predict'
-currency_close_yesterday = mostRecentRow(currency_data,column='date', focus="value")
+currency_close_yesterday = bloombergCommodity('EURUSD:CUR',' Previous Close ')
 currency_price_today = getStockPriceNow('EURUSD=X')
 print (currency_price_today, 'currency price today')
 currency = [currency_close_yesterday,currency_price_today]
@@ -44,7 +44,7 @@ print currency
 
 'brent predict'
 
-brent_close_yesterday = mostRecentRow(brent_data,column='date', focus="value")
+brent_close_yesterday =  bloombergCommodity('CO1:COM',' Previous Close ')
 brent_price_today = getStockPriceNow('BZ=F')
 print (brent_price_today, 'brent price today')
 brent = [brent_close_yesterday,brent_price_today]

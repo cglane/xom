@@ -14,6 +14,7 @@ def getStockHistory(stock_symbol,start='2010-01-01'):
 
 def getStockPriceNow(stock_symbol):
     yahoo = Share(stock_symbol)
+    print yahoo.get_price()
     return float(yahoo.get_price())
 
 def fredValueToday(arg):
@@ -23,3 +24,11 @@ def fredValueToday(arg):
 
 def fredCategory(symbol):
     return fred.observations(symbol)['observations']
+
+def bloombergCommodity(arg,label):
+    page = requests.get('https://www.bloomberg.com/quote/'+arg)
+    tree = html.fromstring(page.content)
+    labels = tree.xpath('//div[@class="cell__label"]/text()')
+    values = tree.xpath('//div[@class="cell__value cell__value_"]/text()')
+    value_index = [x for itr,x in enumerate(values) if labels[itr] == label][0]
+    return float(value_index)

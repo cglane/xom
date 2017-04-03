@@ -10,7 +10,7 @@ from datetime import datetime
 from sklearn import svm
 from sklearn import tree
 from sklearn.naive_bayes import GaussianNB
-
+import hypertools as hyp
 
 
 def convertDate(date):
@@ -94,15 +94,19 @@ def trainModel(exxon_data, currency_data, brent_data):
 
     'Drop Others'
     clean_data = new_merge[['date','action','DCOILBRENTEU','DEXUSEU','exxon_price_df','exxon_open','exxon_close']]
-    print clean_data.head(20)
     clean_data = clean_data.fillna(0)
+    'Graph my Clean Data'
+    graph_data = clean_data[['DCOILBRENTEU','DEXUSEU','exxon_price_df','exxon_open','exxon_close']]
+    graph_labels = clean_data[['action']]
+
     'Split into Training Testing'
-    train ,test = train_test_split(clean_data,test_size=0.4)
+    train ,test = train_test_split(clean_data,test_size=0.5)
     labels_train = train['action'].values
     features_train = train.drop(['action','date','exxon_open','exxon_close'],axis=1)
     labels_test = test['action'].values
     features_test = test.drop(['date','action','exxon_open','exxon_close'],axis=1)
-    print ('Fitting over set of ', len(train))
+
+
     'Predict Some Stuff'
     # clf = GaussianNB()
     clf = tree.DecisionTreeClassifier()
@@ -118,7 +122,7 @@ def trainModel(exxon_data, currency_data, brent_data):
     total = total_before_drop.drop(['date','action','exxon_open','exxon_close'],axis=1)
 
     my_pred = clf.predict(total)
-    print calTotalGain(100, my_pred, total_before_drop['exxon_open'].values, total_before_drop['exxon_close'].values)
+    # print calTotalGain(100, my_pred, total_before_drop['exxon_open'].values, total_before_drop['exxon_close'].values)
 
 
     from sklearn.metrics import accuracy_score
